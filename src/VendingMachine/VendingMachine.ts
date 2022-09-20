@@ -1,4 +1,4 @@
-import { Product } from "../ProductDisplayCase";
+import { Product } from "../Product";
 
 export class VendingMachine {
   constructor(

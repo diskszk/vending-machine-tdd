@@ -1,13 +1,3 @@
-import { VendingMachine } from "../VendingMachine";
-
-export class MonetaryDevice {
-  // static insertMoney(vendingMachine: VendingMachine, coin: string): Money {
-  //   const money = Money.conversionCoinToMoney(coin);
-  //   vendingMachine.addMoney(money.amount);
-  //   return money;
-  // }
-}
-
 const moneyMap: ReadonlyMap<string, number> = new Map([["100円", 100]]);
 
 class Money {

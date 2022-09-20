@@ -1,5 +1,5 @@
 import { VendingMachine } from "./VendingMachine";
-import { Product } from "../ProductDisplayCase/ProductDisplayCase";
+import { Product } from "../Product/Product";
 
 describe("NewVendingMachine", () => {
   let vendingMachine: VendingMachine;
