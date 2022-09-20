@@ -1,3 +1,10 @@
 export class Product {
-  constructor(readonly name: string, readonly value: number) {}
+  constructor(private readonly name: string, private readonly value: number) {}
+
+  getName(): string {
+    return this.name;
+  }
+  getValue(): number {
+    return this.value;
+  }
 }

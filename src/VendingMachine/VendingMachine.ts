@@ -20,12 +20,12 @@ export class VendingMachine {
   }
 
   private canBuyProduct(product: Product): boolean {
-    return this.amountOfMoney >= product.value;
+    return this.amountOfMoney >= product.getValue();
   }
 
   buyProduct(productName: string): Product {
     const findResult = this.productList.find(
-      ({ name }) => name === productName
+      (product) => product.getName() === productName
     );
     if (!findResult) {
       throw new Error("購入できません");

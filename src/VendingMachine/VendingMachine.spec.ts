@@ -13,7 +13,7 @@ describe("NewVendingMachine", () => {
     const inserted100Vm = vendingMachine.insertMoney(["100円"]);
     const product = inserted100Vm.buyProduct("Cola");
 
-    expect(product.name).toBe("Cola");
+    expect(product.getName()).toBe("Cola");
   });
 
   test("100円以外は投入できない", () => {
