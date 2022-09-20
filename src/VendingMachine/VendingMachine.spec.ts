@@ -1,36 +1,44 @@
 import { VendingMachine } from "./VendingMachine";
-import { MonetaryDevice } from "../MonetaryDevice";
-import { ProductDisplayCase } from "../ProductDisplayCase/ProductDisplayCase";
+import { Product } from "../ProductDisplayCase/ProductDisplayCase";
 
-describe("VendingMachine", () => {
+describe("NewVendingMachine", () => {
+  let vendingMachine: VendingMachine;
+  beforeEach(() => {
+    const productList = [new Product("Cola", 100)];
+    vendingMachine = new VendingMachine(productList);
+  });
+
   // お題2. お金を払う
-  test("100円コインを2回投入すると、自動販売機は合計200円分の価値を持つことになる", () => {
-    const vendingMachine = new VendingMachine();
-    MonetaryDevice.insertMoney(vendingMachine, "100円");
-    MonetaryDevice.insertMoney(vendingMachine, "100円");
+  // 内部実装のテストになっているため消す
+  test("100円, 100円を投入すると、合計金額は100円である", () => {
+    const inserted100Vm = vendingMachine.insertMoney(100);
+    const inserted300Vm = inserted100Vm.insertMoney(100);
 
-    const result = vendingMachine.getTotalAmountOfMoney();
+    const result = inserted300Vm.getAmountOfMoney();
 
     expect(result).toBe(200);
   });
 
-  test("100円コインを投入してからボタンを押すとコーラが出る", () => {
-    const vendingMachine = new VendingMachine();
+  test("100円を払ってコーラを購入する", () => {
+    const inserted100Vm = vendingMachine.insertMoney(100);
+    const product = inserted100Vm.buyProduct("Cola");
 
-    MonetaryDevice.insertMoney(vendingMachine, "100円");
-
-    const result = new ProductDisplayCase().getProduct(vendingMachine, "Cola");
-
-    expect(result.name).toBe("Cola");
+    expect(product.name).toBe("Cola");
   });
 
-  test("お金を投入しないでコーラを購入しようとすると失敗する", () => {
-    const vendingMachine = new VendingMachine();
-
-    function tryToBuyColaByFree() {
-      new ProductDisplayCase().getProduct(vendingMachine, "Cola");
+  test("100円以外は投入できない", () => {
+    function tryToInsert500yen() {
+      vendingMachine.insertMoney(500);
     }
 
-    expect(tryToBuyColaByFree).toThrow("投入金額が不足しています。");
+    expect(tryToInsert500yen).toThrow("100円コイン以外は投入できません。");
+  });
+
+  test("投入した金額が足りない場合、購入できない", () => {
+    function tryToColaForFree() {
+      vendingMachine.buyProduct("Cola");
+    }
+
+    expect(tryToColaForFree).toThrow("投入金額が足りません。");
   });
 });
