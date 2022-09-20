@@ -19,12 +19,8 @@ export class VendingMachine {
     );
   }
 
-  getAmountOfMoney(): number {
-    return this.amountOfMoney;
-  }
-
   private canBuyProduct(product: Product): boolean {
-    return this.getAmountOfMoney() >= product.value;
+    return this.amountOfMoney >= product.value;
   }
 
   buyProduct(productName: string): Product {
