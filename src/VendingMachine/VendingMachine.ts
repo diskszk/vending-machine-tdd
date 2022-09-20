@@ -7,6 +7,22 @@ export class VendingMachine {
     private readonly amountOfMoney = 0
   ) {}
 
+  private canBuyProduct(product: Product): boolean {
+    return this.amountOfMoney >= product.getValue();
+  }
+
+  private findProductByName(productName: string): Product {
+    const product = this.productList.find(
+      (product) => product.getName() === productName
+    );
+
+    if (!product) {
+      throw new Error("指定された商品は存在しません。");
+    }
+
+    return product;
+  }
+
   insertMoney(coins: string[]): VendingMachine {
     const totalAmount = coins.reduce<number>((prev, current) => {
       const money = Money.conversionCoinToMoney(current);
@@ -19,22 +35,19 @@ export class VendingMachine {
     );
   }
 
-  private canBuyProduct(product: Product): boolean {
-    return this.amountOfMoney >= product.getValue();
-  }
-
   buyProduct(productName: string): Product {
-    const findResult = this.productList.find(
-      (product) => product.getName() === productName
-    );
-    if (!findResult) {
-      throw new Error("購入できません");
-    }
+    const product = this.findProductByName(productName);
 
-    if (!this.canBuyProduct(findResult)) {
+    if (!this.canBuyProduct(product)) {
       throw new Error("投入金額が足りません。");
     }
 
-    return findResult;
+    return product;
+  }
+
+  isButtonLit(productName: string): boolean {
+    const product = this.findProductByName(productName);
+    
+    return this.canBuyProduct(product);
   }
 }

@@ -1,7 +1,7 @@
 import { VendingMachine } from "./VendingMachine";
 import { Product } from "../Product/Product";
 
-describe("NewVendingMachine", () => {
+describe("VendingMachine", () => {
   let vendingMachine: VendingMachine;
   beforeEach(() => {
     const productList = [new Product("Cola", 100)];
@@ -30,5 +30,35 @@ describe("NewVendingMachine", () => {
     }
 
     expect(tryToColaForFree).toThrow("投入金額が足りません。");
+  });
+
+  // お題3. ウーロン茶追加
+  test("100円を払ってウーロン茶を購入する", () => {
+    const productList = [new Product("OolongTea", 100)];
+    const vendingMachine = new VendingMachine(productList);
+    const insertedCoinVm = vendingMachine.insertMoney(["100円"]);
+
+    const result = insertedCoinVm.buyProduct("OolongTea");
+    expect(result.getName()).toBe("OolongTea");
+  });
+
+  // お題4. レッドブルを追加
+  test("200円を払ってレッドブルを購入する", () => {
+    const productList = [new Product("RedBull", 200)];
+    const vendingMachine = new VendingMachine(productList);
+    const insertedCoinVm = vendingMachine.insertMoney(["100円", "100円"]);
+
+    const result = insertedCoinVm.buyProduct("RedBull");
+    expect(result.getName()).toBe("RedBull");
+  });
+
+  // お題5. 入れたお金に応じて、購入できる商品のボタンが光る
+  test("100円を入れたとき、コーラのボタンは光り、レッドブルのボタンは光らない", () => {
+    const productList = [new Product("Cola", 100), new Product("RedBull", 200)];
+    const vendingMachine = new VendingMachine(productList);
+    const insertedCoinVm = vendingMachine.insertMoney(["100円"]);
+
+    expect(insertedCoinVm.isButtonLit("Cola")).toBe(true);
+    expect(insertedCoinVm.isButtonLit("RedBull")).toBe(false);
   });
 });
