@@ -1,9 +1,13 @@
-import { Money } from "../Money/Money";
+import { MonetaryDevice } from "../MonetaryDevice";
 import { Product } from "../Product";
 
 export class VendingMachine {
   constructor(
     private readonly productList: Product[],
+
+    // 金銭装置instanceを作っておいて使い回す
+    // instanceを作る場所がここであっているか？
+    private readonly monetaryDevice: MonetaryDevice = new MonetaryDevice(),
     private readonly amountOfMoney = 0
   ) {}
 
@@ -25,12 +29,13 @@ export class VendingMachine {
 
   insertMoney(coins: string[]): VendingMachine {
     const totalAmount = coins.reduce<number>((prev, current) => {
-      const money = Money.conversionCoinToMoney(current);
-      return prev + money.amount;
+      const money = this.monetaryDevice.conversionCoinToMoney(current);
+      return prev + money.getValue();
     }, 0);
 
     return new VendingMachine(
       this.productList,
+      this.monetaryDevice,
       this.amountOfMoney + totalAmount
     );
   }
@@ -47,7 +52,7 @@ export class VendingMachine {
 
   isButtonLit(productName: string): boolean {
     const product = this.findProductByName(productName);
-    
+
     return this.canBuyProduct(product);
   }
 }

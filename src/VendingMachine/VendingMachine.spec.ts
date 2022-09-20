@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { VendingMachine } from "./VendingMachine";
-import { Product } from "../Product/Product";
+import { Product } from "../Product";
 
 describe("VendingMachine", () => {
   let vendingMachine: VendingMachine;
@@ -14,14 +15,6 @@ describe("VendingMachine", () => {
     const product = inserted100Vm.buyProduct("Cola");
 
     expect(product.getName()).toBe("Cola");
-  });
-
-  test("100円以外は投入できない", () => {
-    function tryToInsert500yen() {
-      vendingMachine.insertMoney(["500円"]);
-    }
-
-    expect(tryToInsert500yen).toThrow("100円コイン以外は投入できません。");
   });
 
   test("投入した金額が足りない場合、購入できない", () => {
@@ -60,5 +53,24 @@ describe("VendingMachine", () => {
 
     expect(insertedCoinVm.isButtonLit("Cola")).toBe(true);
     expect(insertedCoinVm.isButtonLit("RedBull")).toBe(false);
+  });
+
+  // お題6. 100円コインの他に、10円、50円、500円コインも使える
+  describe("100円コインの他に、10円、50円、500円コインも使える", () => {
+    const vendingMachine = new VendingMachine([]);
+
+    test("10円, 50円, 100円, 500円のいずれを投入してもエラーが起きない", () => {
+      function tryToInsertValidCoins() {
+        vendingMachine.insertMoney(["10円", "50円", "100円", "500円"]);
+      }
+      expect(tryToInsertValidCoins).not.toThrow();
+    });
+    test("5円コインは使用できない", () => {
+      function tryToInsert5Coin() {
+        vendingMachine.insertMoney(["5円"]);
+      }
+
+      expect(tryToInsert5Coin).toThrow("使用不可能な貨幣が投入されました。");
+    });
   });
 });
