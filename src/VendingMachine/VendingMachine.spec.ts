@@ -11,8 +11,8 @@ describe("NewVendingMachine", () => {
   // お題2. お金を払う
   // 内部実装のテストになっているため消す
   test("100円, 100円を投入すると、合計金額は100円である", () => {
-    const inserted100Vm = vendingMachine.insertMoney(100);
-    const inserted300Vm = inserted100Vm.insertMoney(100);
+    const inserted100Vm = vendingMachine.insertMoney(["100円"]);
+    const inserted300Vm = inserted100Vm.insertMoney(["100円"]);
 
     const result = inserted300Vm.getAmountOfMoney();
 
@@ -20,7 +20,7 @@ describe("NewVendingMachine", () => {
   });
 
   test("100円を払ってコーラを購入する", () => {
-    const inserted100Vm = vendingMachine.insertMoney(100);
+    const inserted100Vm = vendingMachine.insertMoney(["100円"]);
     const product = inserted100Vm.buyProduct("Cola");
 
     expect(product.name).toBe("Cola");
@@ -28,7 +28,7 @@ describe("NewVendingMachine", () => {
 
   test("100円以外は投入できない", () => {
     function tryToInsert500yen() {
-      vendingMachine.insertMoney(500);
+      vendingMachine.insertMoney(["500円"]);
     }
 
     expect(tryToInsert500yen).toThrow("100円コイン以外は投入できません。");

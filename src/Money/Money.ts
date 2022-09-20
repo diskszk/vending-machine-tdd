@@ -1,6 +1,6 @@
 const moneyMap: ReadonlyMap<string, number> = new Map([["100円", 100]]);
 
-class Money {
+export class Money {
   constructor(readonly coin: string, readonly amount: number) {}
 
   static conversionCoinToMoney(coin: string) {

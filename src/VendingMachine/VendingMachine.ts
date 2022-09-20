@@ -1,3 +1,4 @@
+import { Money } from "../Money/Money";
 import { Product } from "../Product";
 
 export class VendingMachine {
@@ -6,11 +7,16 @@ export class VendingMachine {
     private readonly amountOfMoney = 0
   ) {}
 
-  insertMoney(money: number): VendingMachine {
-    if (money !== 100) {
-      throw new Error("100円コイン以外は投入できません。");
-    }
-    return new VendingMachine(this.productList, this.amountOfMoney + money);
+  insertMoney(coins: string[]): VendingMachine {
+    const totalAmount = coins.reduce<number>((prev, current) => {
+      const money = Money.conversionCoinToMoney(current);
+      return prev + money.amount;
+    }, 0);
+
+    return new VendingMachine(
+      this.productList,
+      this.amountOfMoney + totalAmount
+    );
   }
 
   getAmountOfMoney(): number {
