@@ -14,7 +14,7 @@ describe("VendingMachine", () => {
     const inserted100Vm = vendingMachine.insertMoney(["100円"]);
     const product = inserted100Vm.buyProduct("Cola");
 
-    expect(product.getName()).toBe("Cola");
+    expect(product.name).toBe("Cola");
   });
 
   test("投入した金額が足りない場合、購入できない", () => {
@@ -32,7 +32,7 @@ describe("VendingMachine", () => {
     const insertedCoinVm = vendingMachine.insertMoney(["100円"]);
 
     const result = insertedCoinVm.buyProduct("OolongTea");
-    expect(result.getName()).toBe("OolongTea");
+    expect(result.name).toBe("OolongTea");
   });
 
   // お題4. レッドブルを追加
@@ -42,7 +42,7 @@ describe("VendingMachine", () => {
     const insertedCoinVm = vendingMachine.insertMoney(["100円", "100円"]);
 
     const result = insertedCoinVm.buyProduct("RedBull");
-    expect(result.getName()).toBe("RedBull");
+    expect(result.name).toBe("RedBull");
   });
 
   // お題5. 入れたお金に応じて、購入できる商品のボタンが光る
