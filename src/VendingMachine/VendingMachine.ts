@@ -60,14 +60,12 @@ export class VendingMachine {
   buyProduct(productName: string): {
     product: Product;
     nextVendingMachine: VendingMachine;
-    change: Money;
   } {
     const product = this.findProductByName(productName);
 
     if (!this.canBuyProduct(product)) {
       throw new Error("投入金額が足りません。");
     }
-
     const nextAmountOfMoney = new Money(
       this.amountOfMoney.value - product.value
     );
@@ -77,12 +75,9 @@ export class VendingMachine {
       nextAmountOfMoney
     );
 
-    const change = this.putOutChange(nextVendingMachine);
-
     return {
       product,
       nextVendingMachine,
-      change,
     };
   }
 
@@ -92,7 +87,14 @@ export class VendingMachine {
     return this.canBuyProduct(product);
   }
 
-  repay(): Money {
-    return this.putOutChange(this);
+  repay(): { repayment: Money; repaidVendingMachine: VendingMachine } {
+    const repaidVendingMachine = new VendingMachine(
+      this.productList,
+      new Money(0)
+    );
+    return {
+      repayment: this.putOutChange(this),
+      repaidVendingMachine,
+    };
   }
 }

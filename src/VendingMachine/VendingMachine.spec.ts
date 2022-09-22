@@ -99,9 +99,11 @@ describe("VendingMachine", () => {
 
     test("500円を投入して100円のコーラを買ったとき、400円お釣りが出る", () => {
       const inserted = vendingMachine.insertMoney([500]);
-      const { change } = inserted.buyProduct("Cola");
+      const { nextVendingMachine } = inserted.buyProduct("Cola");
 
-      expect(change.value).toBe(400);
+      const { repayment } = nextVendingMachine.repay();
+
+      expect(repayment.value).toBe(400);
     });
   });
 
@@ -109,9 +111,28 @@ describe("VendingMachine", () => {
   describe("飲み物を買わなくても、返却ボタンを押すと投入したお金が戻ってくる", () => {
     test("500円を投入し返却ボタン押したとき、500円が帰ってくる", () => {
       const inserted = vendingMachine.insertMoney([500]);
-      const result = inserted.repay();
+      const { repayment } = inserted.repay();
 
-      expect(result.value).toBe(500);
+      expect(repayment.value).toBe(500);
     });
+  });
+
+  test("200円を投入してコーラを2つ購入する", () => {
+    const boughtProductList: Product[] = [];
+
+    const vendingMachine = new VendingMachine([new Product("Cola", 100)]);
+
+    const inserted = vendingMachine.insertMoney([100, 100]);
+
+    const { product: cola1, nextVendingMachine } = inserted.buyProduct("Cola");
+    boughtProductList.push(cola1);
+
+    const { product: cola2 } = nextVendingMachine.buyProduct("Cola");
+    boughtProductList.push(cola2);
+
+    expect(boughtProductList).toEqual([
+      new Product("Cola", 100),
+      new Product("Cola", 100),
+    ]);
   });
 });
