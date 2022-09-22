@@ -105,4 +105,14 @@ describe("VendingMachine", () => {
       expect(change.value).toBe(400);
     });
   });
+
+  // お題8. 返却ボタン
+  describe("飲み物を買わなくても、返却ボタンを押すと投入したお金が戻ってくる", () => {
+    test("500円を投入し返却ボタン押したとき、500円が帰ってくる", () => {
+      const inserted = vendingMachine.insertMoney(["500円"]);
+      const result = inserted.repayment();
+
+      expect(result.value).toBe(500);
+    });
+  });
 });

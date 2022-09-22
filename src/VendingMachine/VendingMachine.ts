@@ -48,7 +48,7 @@ export class VendingMachine {
 
   private putOutChange(nextVendingMachine: VendingMachine): Money {
     return new Money(
-      nextVendingMachine.amountOfMoney.toString + "円",
+      nextVendingMachine.amountOfMoney.toString() + "円",
       nextVendingMachine.amountOfMoney
     );
   }
@@ -82,5 +82,9 @@ export class VendingMachine {
     const product = this.findProductByName(productName);
 
     return this.canBuyProduct(product);
+  }
+
+  repayment(): Money {
+    return this.putOutChange(this);
   }
 }
