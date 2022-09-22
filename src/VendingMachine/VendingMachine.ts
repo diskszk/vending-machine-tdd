@@ -92,7 +92,7 @@ export class VendingMachine {
     return this.canBuyProduct(product);
   }
 
-  repayment(): Money {
+  repay(): Money {
     return this.putOutChange(this);
   }
 }

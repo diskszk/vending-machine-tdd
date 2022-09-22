@@ -109,7 +109,7 @@ describe("VendingMachine", () => {
   describe("飲み物を買わなくても、返却ボタンを押すと投入したお金が戻ってくる", () => {
     test("500円を投入し返却ボタン押したとき、500円が帰ってくる", () => {
       const inserted = vendingMachine.insertMoney([500]);
-      const result = inserted.repayment();
+      const result = inserted.repay();
 
       expect(result.value).toBe(500);
     });
