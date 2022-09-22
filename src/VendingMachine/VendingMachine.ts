@@ -46,14 +46,36 @@ export class VendingMachine {
     );
   }
 
-  buyProduct(productName: string): Product {
+  private putOutChange(nextVendingMachine: VendingMachine): Money {
+    return new Money(
+      nextVendingMachine.amountOfMoney.toString + "円",
+      nextVendingMachine.amountOfMoney
+    );
+  }
+
+  buyProduct(productName: string): {
+    product: Product;
+    nextVendingMachine: VendingMachine;
+    change: Money;
+  } {
     const product = this.findProductByName(productName);
 
     if (!this.canBuyProduct(product)) {
       throw new Error("投入金額が足りません。");
     }
 
-    return product;
+    const nextVendingMachine = new VendingMachine(
+      this.productList,
+      this.amountOfMoney - product.value
+    );
+
+    const change = this.putOutChange(nextVendingMachine);
+
+    return {
+      product,
+      nextVendingMachine,
+      change,
+    };
   }
 
   isButtonLit(productName: string): boolean {

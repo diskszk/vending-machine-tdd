@@ -12,7 +12,7 @@ describe("VendingMachine", () => {
   // お題2. お金を払う
   test("100円を払ってコーラを購入する", () => {
     const inserted100Vm = vendingMachine.insertMoney(["100円"]);
-    const product = inserted100Vm.buyProduct("Cola");
+    const { product } = inserted100Vm.buyProduct("Cola");
 
     expect(product.name).toBe("Cola");
   });
@@ -31,8 +31,8 @@ describe("VendingMachine", () => {
     const vendingMachine = new VendingMachine(productList);
     const insertedCoinVm = vendingMachine.insertMoney(["100円"]);
 
-    const result = insertedCoinVm.buyProduct("OolongTea");
-    expect(result.name).toBe("OolongTea");
+    const { product } = insertedCoinVm.buyProduct("OolongTea");
+    expect(product.name).toBe("OolongTea");
   });
 
   // お題4. レッドブルを追加
@@ -41,8 +41,8 @@ describe("VendingMachine", () => {
     const vendingMachine = new VendingMachine(productList);
     const insertedCoinVm = vendingMachine.insertMoney(["100円", "100円"]);
 
-    const result = insertedCoinVm.buyProduct("RedBull");
-    expect(result.name).toBe("RedBull");
+    const { product } = insertedCoinVm.buyProduct("RedBull");
+    expect(product.name).toBe("RedBull");
   });
 
   // お題5. 入れたお金に応じて、購入できる商品のボタンが光る
@@ -71,6 +71,38 @@ describe("VendingMachine", () => {
       }
 
       expect(tryToInsert5Coin).toThrow("使用不可能な貨幣が投入されました。");
+    });
+  });
+
+  // お題7. お釣り
+  describe("お金を入れボタンを押して飲み物を買うと、お釣りが出る", () => {
+    let vendingMachine: VendingMachine;
+    beforeEach(() => {
+      const productList = [
+        new Product("Cola", 100),
+        new Product("OolongTea", 100),
+      ];
+      vendingMachine = new VendingMachine(productList);
+    });
+
+    test("100円を投入し100円でコーラを買ったあと、追加で100円を投入しないとウーロン茶を購入できない", () => {
+      const inserted = vendingMachine.insertMoney(["100円"]);
+
+      // 購入する
+      const { nextVendingMachine } = inserted.buyProduct("Cola");
+
+      expect(nextVendingMachine.isButtonLit("OolongTea")).toBe(false);
+
+      const nextInserted = nextVendingMachine.insertMoney(["100円"]);
+
+      expect(nextInserted.isButtonLit("OolongTea")).toBe(true);
+    });
+
+    test("500円を投入して100円のコーラを買ったとき、400円お釣りが出る", () => {
+      const inserted = vendingMachine.insertMoney(["500円"]);
+      const { change } = inserted.buyProduct("Cola");
+
+      expect(change.value).toBe(400);
     });
   });
 });
