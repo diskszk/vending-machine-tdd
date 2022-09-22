@@ -1,14 +1,14 @@
-import { Money, MoneyMap } from "../Money";
+import { Money } from "../Money";
 import { Product } from "../Product";
 
 export class VendingMachine {
   constructor(
     private readonly productList: Product[],
-    private readonly amountOfMoney = 0
+    private readonly amountOfMoney = new Money(0)
   ) {}
 
   private canBuyProduct(product: Product): boolean {
-    return this.amountOfMoney >= product.value;
+    return this.amountOfMoney.value >= product.value;
   }
 
   private findProductByName(productName: string): Product {
@@ -23,34 +23,38 @@ export class VendingMachine {
     return product;
   }
 
-  private conversionCoinToMoney(coin: string): Money {
-    const moneyMap = MoneyMap.getMoneyMap();
-    const value = moneyMap.get(coin);
-
-    if (!value) {
-      throw new Error("使用不可能な貨幣が投入されました。");
-    }
-
-    return new Money(coin, value);
+  private conversionCoinToMoney(coin: number): Money {
+    return new Money(coin);
   }
 
-  insertMoney(coins: string[]): VendingMachine {
-    const totalAmount = coins.reduce<number>((prev, current) => {
-      const money = this.conversionCoinToMoney(current);
-      return prev + money.value;
-    }, 0);
+  private isValidCoin(coin: number): boolean {
+    if (coin !== 10 && coin !== 50 && coin !== 100 && coin !== 500) {
+      return false;
+    }
+    return true;
+  }
+
+  insertMoney(coins: number[]): VendingMachine {
+    const insertedMoneyAmount = coins.reduce<Money>(
+      (prevMoney, currentCoin) => {
+        if (!this.isValidCoin(currentCoin)) {
+          throw new Error("使用不可能な貨幣が投入されました。");
+        }
+
+        const currentMoney = this.conversionCoinToMoney(currentCoin);
+        return prevMoney.add(currentMoney);
+      },
+      new Money(0)
+    );
 
     return new VendingMachine(
       this.productList,
-      this.amountOfMoney + totalAmount
+      this.amountOfMoney.add(insertedMoneyAmount)
     );
   }
 
   private putOutChange(nextVendingMachine: VendingMachine): Money {
-    return new Money(
-      nextVendingMachine.amountOfMoney.toString() + "円",
-      nextVendingMachine.amountOfMoney
-    );
+    return nextVendingMachine.amountOfMoney;
   }
 
   buyProduct(productName: string): {
@@ -64,9 +68,13 @@ export class VendingMachine {
       throw new Error("投入金額が足りません。");
     }
 
+    const nextAmountOfMoney = new Money(
+      this.amountOfMoney.value - product.value
+    );
+
     const nextVendingMachine = new VendingMachine(
       this.productList,
-      this.amountOfMoney - product.value
+      nextAmountOfMoney
     );
 
     const change = this.putOutChange(nextVendingMachine);
