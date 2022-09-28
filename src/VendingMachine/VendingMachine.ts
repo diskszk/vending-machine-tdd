@@ -4,7 +4,7 @@ import { Product } from "../Product";
 export class VendingMachine {
   constructor(
     private readonly productList: Product[],
-    private readonly amountOfMoney = new Money(0)
+    private amountOfMoney = new Money(0)
   ) {}
 
   private canBuyProduct(product: Product): boolean {
@@ -23,62 +23,34 @@ export class VendingMachine {
     return product;
   }
 
-  private conversionCoinToMoney(coin: number): Money {
-    return new Money(coin);
-  }
-
-  private isValidCoin(coin: number): boolean {
+  private isValidCoin(coin: number): void {
     if (coin !== 10 && coin !== 50 && coin !== 100 && coin !== 500) {
-      return false;
+      throw new Error("使用不可能な貨幣が投入されました。");
     }
-    return true;
+
+    return;
   }
 
-  insertMoney(coins: number[]): VendingMachine {
-    const insertedMoneyAmount = coins.reduce<Money>(
-      (prevMoney, currentCoin) => {
-        if (!this.isValidCoin(currentCoin)) {
-          throw new Error("使用不可能な貨幣が投入されました。");
-        }
+  insertCoins(coins: number[]): void {
+    const insertedTotalMoneyAmount = coins.reduce((total, current) => {
+      this.isValidCoin(current);
+      return (total += current);
+    }, 0);
 
-        const currentMoney = this.conversionCoinToMoney(currentCoin);
-        return prevMoney.add(currentMoney);
-      },
-      new Money(0)
-    );
-
-    return new VendingMachine(
-      this.productList,
-      this.amountOfMoney.add(insertedMoneyAmount)
+    this.amountOfMoney = new Money(
+      this.amountOfMoney.value + insertedTotalMoneyAmount
     );
   }
 
-  private putOutChange(nextVendingMachine: VendingMachine): Money {
-    return nextVendingMachine.amountOfMoney;
-  }
-
-  buyProduct(productName: string): {
-    product: Product;
-    nextVendingMachine: VendingMachine;
-  } {
+  buyProduct(productName: string): Product {
     const product = this.findProductByName(productName);
 
     if (!this.canBuyProduct(product)) {
       throw new Error("投入金額が足りません。");
     }
-    const nextAmountOfMoney = new Money(
-      this.amountOfMoney.value - product.value
-    );
+    this.amountOfMoney = new Money(this.amountOfMoney.value - product.value);
 
-    const nextVendingMachine = new VendingMachine(
-      this.productList,
-      nextAmountOfMoney
-    );
-
-    return {
-      product,
-      nextVendingMachine,
-    };
+    return product;
   }
 
   isButtonLit(productName: string): boolean {
@@ -87,14 +59,7 @@ export class VendingMachine {
     return this.canBuyProduct(product);
   }
 
-  repay(): { repayment: Money; repaidVendingMachine: VendingMachine } {
-    const repaidVendingMachine = new VendingMachine(
-      this.productList,
-      new Money(0)
-    );
-    return {
-      repayment: this.putOutChange(this),
-      repaidVendingMachine,
-    };
+  repay(): Money {
+    return this.amountOfMoney;
   }
 }
